@@ -1,4 +1,6 @@
-# KriptoKit
+<p align="center">
+  <img src="assets/Logo.png" alt="KriptoKit logo" width="260" />
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-14.2.33-000000?logo=nextdotjs&logoColor=white" alt="Next.js badge" />
@@ -50,6 +52,8 @@ KriptoKit/
 │   ├── globals.css        # styling global dan visual system
 │   ├── layout.tsx         # metadata aplikasi
 │   └── page.tsx           # entry page
+├── assets/
+│   └── Logo.png           # logo utama untuk README dan branding
 ├── lib/
 │   └── crypto.ts          # helper crypto browser-side
 ├── wireframe.html         # referensi visual / wireframe
@@ -182,6 +186,11 @@ npm run dev -- --hostname 0.0.0.0
 - semua transformasi dilakukan langsung di browser
 - tidak ada request ke server
 - output bisa dipakai ulang untuk demo atau presentasi
+
+## 🎨 Visual reference
+
+- `wireframe.html` berisi referensi visual terbaru untuk layout KriptoKit.
+- Header wireframe sekarang mengikuti branding logo yang dipakai di README.
 
 ## 📝 Notes
 
