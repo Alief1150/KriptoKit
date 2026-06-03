@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KriptoKit</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="tiny">Kriptografi UAS · browser-side only</div>
+        <h1>KriptoKit</h1>
+        <p>Tool kriptografi yang sengaja dibuat tegas, langsung, dan cukup teknis untuk demo ke anak IT. Semua proses jalan lokal di browser, tanpa backend.</p>
+      </div>
+      <div class="topbar-meta">
+        <div class="chip chip--accent">Dark UI / maroon accent</div>
+        <div class="chip">No server round-trip</div>
+      </div>
+    </header>
+
+    <section class="content-grid">
+      <aside class="column">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Operations</h2>
+              <p class="panel-subtitle">Drag satu mode ke workspace kanan atau klik langsung untuk pindah mode. Drag-and-drop di sini hanya untuk memilih operasi.</p>
+            </div>
+            <div class="chip">Modes</div>
+          </div>
+
+          <div class="sidebar-controls">
+            <div class="search" role="search">
+              <span class="tiny">Search</span>
+              <input id="searchInput" type="text" placeholder="AES, Base64, SHA-256, ROT13, Hex" aria-label="Search operation" />
+            </div>
+
+            <div class="op-list" id="operationList">
+              <button class="op-card" draggable="true" data-mode="aes" aria-pressed="true" type="button">
+                <span class="op-card__label">AES</span>
+                <span class="op-card__meta">encrypt / decrypt</span>
+              </button>
+              <button class="op-card" draggable="true" data-mode="base64" type="button">
+                <span class="op-card__label">Base64</span>
+                <span class="op-card__meta">encode / decode</span>
+              </button>
+              <button class="op-card" draggable="true" data-mode="sha256" type="button">
+                <span class="op-card__label">SHA-256</span>
+                <span class="op-card__meta">text hash</span>
+              </button>
+              <button class="op-card" draggable="true" data-mode="rot13" type="button">
+                <span class="op-card__label">ROT13</span>
+                <span class="op-card__meta">transform</span>
+              </button>
+              <button class="op-card" draggable="true" data-mode="hex" type="button">
+                <span class="op-card__label">Hexadecimal</span>
+                <span class="op-card__meta">encode / decode</span>
+              </button>
+            </div>
+
+            <div class="note">
+              <strong>Pattern:</strong> pilih mode dengan drag ke panel kanan. <strong>Verification</strong> tidak ikut dipindah karena selalu tampil di tengah sebagai workflow hash compare.
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="column">
+        <section class="panel verification-zone">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">SHA-256 Verification Tool</h2>
+              <p class="panel-subtitle">Bandingkan hash SHA-256 file target dengan hash referensi dari file TXT. Output akan menunjukkan valid atau mismatch.</p>
+            </div>
+            <div class="chip chip--accent">Hash integrity compare</div>
+          </div>
+
+          <div class="workspace">
+            <div class="workspace-header">
+              <div id="verificationDrop" class="drop-hint" aria-label="Verification drop target" tabindex="0">
+                <div>
+                  <strong>Drop target file here</strong>
+                  <div>Hitung SHA-256 dari file target, lalu cocokkan dengan hash pembanding.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="verification-flow">
+              <div class="status-grid">
+                <label class="file-box" data-file-drop="target">
+                  <span class="tiny">Target file</span>
+                  <input id="targetFile" type="file" />
+                  <div class="file-meta">
+                    <span id="targetMetaName">No file selected</span>
+                    <span id="targetMetaInfo">Select any file. The app only reads it locally.</span>
+                  </div>
+                </label>
+
+                <label class="file-box" data-file-drop="reference">
+                  <span class="tiny">Reference hash TXT</span>
+                  <input id="referenceFile" type="file" accept=".txt,text/plain" />
+                  <div class="file-meta">
+                    <span id="referenceMetaName">No reference selected</span>
+                    <span id="referenceMetaInfo">TXT content should contain a single SHA-256 hex string.</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="split-grid">
+                <div class="result-box">
+                  <label for="targetHash">Computed target hash</label>
+                  <textarea id="targetHash" readonly placeholder="Target hash will appear here"></textarea>
+                </div>
+                <div class="result-box">
+                  <label for="referenceHash">Parsed reference hash</label>
+                  <textarea id="referenceHash" readonly placeholder="Reference hash will appear here"></textarea>
+                </div>
+              </div>
+
+              <div class="flex-between">
+                <div class="inline-list">
+                  <button class="action" id="verifyButton" type="button">Verify</button>
+                  <button class="small-action" id="clearVerificationButton" type="button">Clear</button>
+                </div>
+                <div class="result-chip" id="verificationStatus" data-tone="neutral">Waiting for files</div>
+              </div>
+
+              <div class="flow-box">
+                <label for="verificationOutput">Verification output</label>
+                <textarea id="verificationOutput" readonly placeholder="Valid / invalid status appears here"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="column">
+        <section class="panel workspace" data-workspace="operations">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Operation Workspace</h2>
+              <p class="panel-subtitle">Drop mode here. The panel stays the same shape; only the field recipe changes based on the active operation.</p>
+            </div>
+            <div class="chip">Drop mode</div>
+          </div>
+
+          <div class="workspace-header">
+            <div id="operationDrop" class="drop-hint is-drop-target" tabindex="0" aria-label="Operation drop zone">
+              <div>
+                <strong>Drag operation here</strong>
+                <div>AES, Base64, SHA-256, ROT13, or Hexadecimal.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-panel is-active" data-mode-panel="aes">
+            <div class="mode-panel__top">
+              <div>
+                <h3 class="mode-panel__title">AES Toolkit</h3>
+                <p class="mode-panel__desc">Use a password-based AES-GCM demo. Encrypt outputs a JSON bundle; decrypt expects that bundle back.</p>
+              </div>
+              <div class="toolbar" role="tablist" aria-label="AES submode">
+                <button class="tab-button" type="button" data-aes-tab="encrypt" aria-pressed="true">Encrypt</button>
+                <button class="tab-button" type="button" data-aes-tab="decrypt" aria-pressed="false">Decrypt</button>
+              </div>
+            </div>
+
+            <div class="field-grid" data-aes-form="encrypt">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Key / Password</span>
+                  <input id="aesEncryptPassword" type="password" placeholder="Secret key" />
+                </label>
+                <label class="field">
+                  <span class="tiny">IV mode</span>
+                  <input type="text" value="Random IV" readonly />
+                </label>
+              </div>
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Mode</span>
+                  <input type="text" value="GCM" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Raw plaintext" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Plaintext</span>
+                <textarea id="aesEncryptInput" rows="4" placeholder="Type plaintext to encrypt"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="aesEncryptButton" type="button">Encrypt</button>
+                <button class="copy-button" data-copy-target="aesEncryptOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="aesEncryptOutput">Output</label>
+                <textarea id="aesEncryptOutput" readonly placeholder="Ciphertext package appears here"></textarea>
+              </div>
+            </div>
+
+            <div class="field-grid hidden" data-aes-form="decrypt">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Key / Password</span>
+                  <input id="aesDecryptPassword" type="password" placeholder="Secret key" />
+                </label>
+                <label class="field">
+                  <span class="tiny">IV mode</span>
+                  <input type="text" value="From package" readonly />
+                </label>
+              </div>
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Mode</span>
+                  <input type="text" value="GCM" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Cipher package" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Cipher package</span>
+                <textarea id="aesDecryptInput" rows="4" placeholder='Paste JSON package from encrypt mode'></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="aesDecryptButton" type="button">Decrypt</button>
+                <button class="copy-button" data-copy-target="aesDecryptOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="aesDecryptOutput">Output</label>
+                <textarea id="aesDecryptOutput" readonly placeholder="Plaintext appears here"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-panel" data-mode-panel="base64">
+            <div class="mode-panel__top">
+              <div>
+                <h3 class="mode-panel__title">Base64 Encoder / Decoder</h3>
+                <p class="mode-panel__desc">Quick representation change. Use encode to produce Base64, decode to return original text.</p>
+              </div>
+              <div class="toolbar" role="tablist" aria-label="Base64 mode">
+                <button class="tab-button" type="button" data-base64-tab="encode" aria-pressed="true">Encode</button>
+                <button class="tab-button" type="button" data-base64-tab="decode" aria-pressed="false">Decode</button>
+              </div>
+            </div>
+
+            <div class="field-grid" data-base64-form="encode">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Alphabet</span>
+                  <input type="text" value="A-Z a-z 0-9 + / =" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Raw text" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Text input</span>
+                <textarea id="base64EncodeInput" rows="4" placeholder="Text to encode"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="base64EncodeButton" type="button">Encode</button>
+                <button class="copy-button" data-copy-target="base64EncodeOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="base64EncodeOutput">Output</label>
+                <textarea id="base64EncodeOutput" readonly placeholder="Encoded output appears here"></textarea>
+              </div>
+            </div>
+
+            <div class="field-grid hidden" data-base64-form="decode">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Alphabet</span>
+                  <input type="text" value="A-Z a-z 0-9 + / =" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Base64" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Input Base64</span>
+                <textarea id="base64DecodeInput" rows="4" placeholder="Base64 string to decode"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="base64DecodeButton" type="button">Decode</button>
+                <button class="copy-button" data-copy-target="base64DecodeOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="base64DecodeOutput">Output</label>
+                <textarea id="base64DecodeOutput" readonly placeholder="Decoded text appears here"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-panel" data-mode-panel="sha256">
+            <div class="mode-panel__top">
+              <div>
+                <h3 class="mode-panel__title">SHA-256 Text Hash</h3>
+                <p class="mode-panel__desc">One-way hash generator for plain text. Small change in input should create a different digest.</p>
+              </div>
+              <div class="chip">64 hex chars</div>
+            </div>
+
+            <div class="field-grid">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Size</span>
+                  <input type="text" value="SHA-256" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Output</span>
+                  <input type="text" value="Hex" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Plain text</span>
+                <textarea id="shaInput" rows="4" placeholder="Type text to hash"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="shaButton" type="button">Generate hash</button>
+                <button class="copy-button" data-copy-target="shaOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="shaOutput">Output</label>
+                <textarea id="shaOutput" readonly placeholder="Hash appears here"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-panel" data-mode-panel="rot13">
+            <div class="mode-panel__top">
+              <div>
+                <h3 class="mode-panel__title">ROT13 Transformer</h3>
+                <p class="mode-panel__desc">Lightweight letter rotation for quick encoding demos. Useful for teaching reversible substitution.</p>
+              </div>
+              <div class="chip">Symmetric text</div>
+            </div>
+
+            <div class="field-grid">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Amount</span>
+                  <input type="text" value="13" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Mode</span>
+                  <input type="text" value="Rotate letters" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Text</span>
+                <textarea id="rot13Input" rows="4" placeholder="Enter text to transform"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="rot13Button" type="button">Transform</button>
+                <button class="copy-button" data-copy-target="rot13Output" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="rot13Output">Output</label>
+                <textarea id="rot13Output" readonly placeholder="ROT13 output appears here"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="mode-panel" data-mode-panel="hex">
+            <div class="mode-panel__top">
+              <div>
+                <h3 class="mode-panel__title">Hexadecimal Converter</h3>
+                <p class="mode-panel__desc">Convert text to hexadecimal or decode hexadecimal back to text. Keep it simple, keep it local.</p>
+              </div>
+              <div class="toolbar" role="tablist" aria-label="Hexadecimal mode">
+                <button class="tab-button" type="button" data-hex-tab="encode" aria-pressed="true">Encode</button>
+                <button class="tab-button" type="button" data-hex-tab="decode" aria-pressed="false">Decode</button>
+              </div>
+            </div>
+
+            <div class="field-grid" data-hex-form="encode">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Raw text" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Output</span>
+                  <input type="text" value="Hex" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Text input</span>
+                <textarea id="hexEncodeInput" rows="4" placeholder="Text to convert to hex"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="hexEncodeButton" type="button">Encode</button>
+                <button class="copy-button" data-copy-target="hexEncodeOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="hexEncodeOutput">Output</label>
+                <textarea id="hexEncodeOutput" readonly placeholder="Hex output appears here"></textarea>
+              </div>
+            </div>
+
+            <div class="field-grid hidden" data-hex-form="decode">
+              <div class="split-grid split-grid--tight">
+                <label class="field">
+                  <span class="tiny">Input</span>
+                  <input type="text" value="Hex" readonly />
+                </label>
+                <label class="field">
+                  <span class="tiny">Output</span>
+                  <input type="text" value="Raw text" readonly />
+                </label>
+              </div>
+              <label class="field">
+                <span class="tiny">Hex input</span>
+                <textarea id="hexDecodeInput" rows="4" placeholder="Hex string to decode"></textarea>
+              </label>
+              <div class="mode-panel__actions">
+                <button class="action" id="hexDecodeButton" type="button">Decode</button>
+                <button class="copy-button" data-copy-target="hexDecodeOutput" type="button">Copy output</button>
+              </div>
+              <div class="result-box">
+                <label for="hexDecodeOutput">Output</label>
+                <textarea id="hexDecodeOutput" readonly placeholder="Decoded text appears here"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

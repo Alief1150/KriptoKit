@@ -1,0 +1,8 @@
+.next/
+node_modules/
+*.log
+*.tsbuildinfo
+.~lock.*
+*.docx
+session-ses_*.md
+.hallmark/

@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KriptoKit Wireframe Final</title>
+  <style>
+    :root {
+      --bg: #05070a;
+      --bg-2: #08111a;
+      --panel: #0a0f15;
+      --panel-2: #0c1218;
+      --line: rgba(243, 244, 246, 0.16);
+      --line-strong: rgba(243, 244, 246, 0.24);
+      --text: #f5f6f7;
+      --muted: rgba(245, 246, 247, 0.72);
+      --maroon: #b72e1f;
+      --maroon-2: #e0563f;
+      --glow: rgba(176, 44, 29, 0.22);
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%),
+        repeating-linear-gradient(0deg, transparent 0 47px, rgba(255,255,255,0.1) 47px 48px),
+        repeating-linear-gradient(90deg, transparent 0 47px, rgba(255,255,255,0.1) 47px 48px),
+        radial-gradient(circle at 50% 12%, rgba(208, 71, 43, 0.18), transparent 20%),
+        radial-gradient(circle at 15% 100%, rgba(208, 71, 43, 0.12), transparent 28%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -120px;
+      background:
+        radial-gradient(circle at 20% 24%, rgba(208, 71, 43, 0.26), transparent 20%),
+        radial-gradient(circle at 75% 30%, rgba(208, 71, 43, 0.18), transparent 22%),
+        radial-gradient(circle at 50% 92%, rgba(208, 71, 43, 0.14), transparent 28%);
+      filter: blur(70px);
+      pointer-events: none;
+      opacity: 0.95;
+    }
+
+    .app {
+      position: relative;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      padding: 18px 18px 20px;
+      gap: 14px;
+    }
+
+    .ticker {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(183,46,31,0.9), rgba(224,86,63,0.9), rgba(183,46,31,0.9));
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+      min-height: 52px;
+    }
+
+    .ticker::before,
+    .ticker::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 84px;
+      z-index: 2;
+    }
+
+    .ticker::before { left: 0; background: linear-gradient(90deg, rgba(5,7,10,1), transparent); }
+    .ticker::after { right: 0; background: linear-gradient(270deg, rgba(5,7,10,1), transparent); }
+
+    .ticker__track {
+      display: flex;
+      width: max-content;
+      gap: 36px;
+      padding: 14px 20px;
+      animation: marquee 24s linear infinite;
+    }
+
+    .ticker__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.96);
+    }
+
+    .ticker__item::before {
+      content: "★";
+      color: rgba(255,255,255,0.92);
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .hero {
+      display: grid;
+      place-items: center;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-weight: 900;
+      font-size: clamp(56px, 9vw, 110px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+      text-transform: none;
+      text-decoration: underline;
+      text-decoration-thickness: 0.16em;
+      text-underline-offset: 0.1em;
+      text-decoration-color: rgba(245, 246, 247, 0.72);
+      text-shadow: 0 0 18px rgba(255,255,255,0.05);
+    }
+
+    .hero .tiny {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(290px, 0.95fr) minmax(320px, 1.05fr) minmax(320px, 1.1fr);
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .panel {
+      position: relative;
+      min-height: 0;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(208,71,43,0.14), transparent 40%),
+        linear-gradient(180deg, rgba(10,15,21,0.98), rgba(8,12,17,0.99));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04) inset,
+        0 0 56px rgba(183,46,31,0.15),
+        0 20px 50px var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      background:
+        radial-gradient(circle at 25% 22%, rgba(224,86,63,0.18), transparent 28%),
+        radial-gradient(circle at 75% 14%, rgba(183,46,31,0.12), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(183,46,31,0.10), transparent 36%);
+      filter: blur(30px);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .panel > * { position: relative; z-index: 1; }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .panel-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 42ch;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .col {
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .col + .col {
+      border-left: 1px solid rgba(255,255,255,0.1);
+      padding-left: 14px;
+    }
+
+    .stack {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .tool-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tool {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(224,86,63,0.16), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    }
+
+    .tool.active {
+      border-color: rgba(224,86,63,0.8);
+      box-shadow: 0 0 0 1px rgba(224,86,63,0.14) inset;
+    }
+
+    .tool strong { font-size: 16px; }
+    .tool span { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .note {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 14px;
+      grid-template-rows: auto auto 1fr;
+      min-height: 0;
+    }
+
+    .dropzone {
+      min-height: 118px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px dashed rgba(255,255,255,0.22);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(224,86,63,0.16), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .dropzone strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .dropzone div { color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+    }
+
+    .card {
+      min-height: 96px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .card label,
+    .box label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .box {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .field {
+      min-height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.68);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .button,
+    .button--ghost {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .button--ghost {
+      background: transparent;
+    }
+
+    .status {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      min-height: 0;
+    }
+
+    .subtitle-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .subtitle-row h3 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 244px;
+      height: 54px;
+      border-radius: 999px;
+      border: 1px solid rgba(224,86,63,0.88);
+      background: rgba(8, 12, 17, 0.98);
+      overflow: hidden;
+      box-shadow: 0 0 18px rgba(183,46,31,0.12);
+    }
+
+    .thumb {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: calc(50% - 5px);
+      height: 44px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(224,86,63,0.44), rgba(183,46,31,0.72));
+      box-shadow: 0 0 22px rgba(224,86,63,0.18);
+    }
+
+    .thumb.right { left: calc(50% + 0px); }
+
+    .toggle .opt {
+      position: relative;
+      z-index: 1;
+      width: 50%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+    }
+
+    .result-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .result-box {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .result-box textarea {
+      width: 100%;
+      min-height: 70px;
+      resize: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.72);
+      outline: 0;
+      font: inherit;
+      line-height: 1.45;
+    }
+
+    .verification-flow {
+      display: grid;
+      gap: 12px;
+    }
+
+    .split {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.86);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer-note {
+      position: absolute;
+      left: 18px;
+      bottom: 14px;
+      color: rgba(255,255,255,0.38);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1200px) {
+      .app { height: auto; min-height: 100vh; overflow: auto; }
+      body { overflow: auto; }
+      .grid { grid-template-columns: 1fr; }
+      .col + .col { border-left: 0; padding-left: 0; }
+      .footer-note { position: static; margin-top: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="ticker" aria-label="Running text">
+      <div class="ticker__track">
+        <span class="ticker__item">AES-GCM · local browser crypto</span>
+        <span class="ticker__item">Drag operation to unlock workflow</span>
+        <span class="ticker__item">SHA-256 verification · file compare</span>
+        <span class="ticker__item">Base64 encode / decode</span>
+        <span class="ticker__item">ROT13 transform · hex converter</span>
+        <span class="ticker__item">No backend · no upload · no page scroll</span>
+        <span class="ticker__item">Mas Bahlil Ganteng</span>
+        <span class="ticker__item">Prabowo dan Teddy</span>
+        <span class="ticker__item">Dihina-hina saya juga diam</span>
+        <span class="ticker__item">Tetapi hari ini SAYA AKAN LAWAN!</span>
+        <span class="ticker__item">AES-GCM · local browser crypto</span>
+        <span class="ticker__item">Drag operation to unlock workflow</span>
+        <span class="ticker__item">SHA-256 verification · file compare</span>
+        <span class="ticker__item">Base64 encode / decode</span>
+        <span class="ticker__item">ROT13 transform · hex converter</span>
+        <span class="ticker__item">No backend · no upload · no page scroll</span>
+        <span class="ticker__item">Mas Bahlil Ganteng</span>
+        <span class="ticker__item">Prabowo dan Teddy</span>
+        <span class="ticker__item">Dihina-hina saya juga diam</span>
+        <span class="ticker__item">Tetapi hari ini SAYA AKAN LAWAN!</span>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div>
+        <h1>KriptoKit</h1>
+        <div class="tiny">Cryptography UAS demo</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="col">
+        <div class="panel stack">
+          <div class="panel-head">
+            <div>
+              <h2>Operations</h2>
+              <p>Drag a mode into the workspace to activate it. Search is a lightweight filter, not an action.</p>
+            </div>
+            <span class="pill">modes</span>
+          </div>
+
+          <div class="search">Search · AES, Base64, SHA-256, ROT13, Hex</div>
+
+          <div class="tool-list">
+            <div class="tool active"><strong>AES</strong><span>encrypt / decrypt</span></div>
+            <div class="tool"><strong>Base64</strong><span>encode / decode</span></div>
+            <div class="tool"><strong>SHA-256</strong><span>text hash</span></div>
+            <div class="tool"><strong>ROT13</strong><span>transform</span></div>
+            <div class="tool"><strong>Hexadecimal</strong><span>encode / decode</span></div>
+          </div>
+
+          <div class="note">
+            <strong>Pattern:</strong> drag only. The app stays compact, dark, and browser-side only.
+          </div>
+        </div>
+      </section>
+
+      <section class="col">
+        <div class="panel workspace">
+          <div class="panel-head">
+            <div>
+              <h2>SHA-256 Verification Tool</h2>
+              <p>Drop a target file and a TXT reference hash. Verification happens locally in the browser.</p>
+            </div>
+            <span class="pill">hash compare</span>
+          </div>
+
+          <div class="stack" style="padding-top: 0;">
+            <div class="dropzone">
+              <div>
+                <strong>Drop target file here</strong>
+                <div>Computes SHA-256 locally and compares it with the reference hash.</div>
+              </div>
+            </div>
+
+            <div class="verification-flow">
+              <div class="split">
+                <div class="result-box">
+                  <label>Target file</label>
+                  <div class="field">No file selected</div>
+                </div>
+                <div class="result-box">
+                  <label>Reference TXT</label>
+                  <div class="field">SHA-256 hex string</div>
+                </div>
+              </div>
+
+              <div class="result-grid">
+                <div class="result-box">
+                  <label>Computed target hash</label>
+                  <textarea readonly placeholder="Target hash appears here"></textarea>
+                </div>
+                <div class="result-box">
+                  <label>Parsed reference hash</label>
+                  <textarea readonly placeholder="Reference hash appears here"></textarea>
+                </div>
+              </div>
+
+              <div class="actions">
+                <div class="button">Verify</div>
+                <div class="button--ghost">Clear</div>
+                <span class="badge">waiting for files</span>
+              </div>
+
+              <div class="status">
+                Verification output appears here.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="col">
+        <div class="panel workspace">
+          <div class="panel-head">
+            <div>
+              <h2>Operation Workspace</h2>
+              <p>Drag the selected operation here. The right panel changes by mode, but the layout stays single-card.</p>
+            </div>
+            <span class="pill">drop mode</span>
+          </div>
+
+          <div class="stack" style="padding-top: 0;">
+            <div class="dropzone">
+              <div>
+                <strong>Drag operation here</strong>
+                <div>AES, Base64, SHA-256, ROT13, or Hexadecimal.</div>
+              </div>
+            </div>
+
+            <div class="subtitle-row">
+              <div>
+                <h3>AES Toolkit</h3>
+                <div style="color: var(--muted); font-size: 13px; line-height: 1.45;">Password-based AES-GCM demo. Encrypt outputs a JSON bundle; decrypt consumes the same package.</div>
+              </div>
+              <div class="toggle-wrap">
+                <div class="toggle" aria-hidden="true">
+                  <div class="thumb"></div>
+                  <div class="opt">Encrypt</div>
+                  <div class="opt">Decrypt</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="split">
+              <div class="card">
+                <label>Key / Password</label>
+                <div class="field">Secret key</div>
+                <label style="margin-top: 10px;">Plaintext / Cipher package</label>
+                <div class="field" style="min-height: 112px;">Type or paste content here</div>
+              </div>
+
+              <div class="card">
+                <label>Mode</label>
+                <div class="field">GCM</div>
+                <label style="margin-top: 10px;">Output</label>
+                <div class="field" style="min-height: 112px;">Result appears here</div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <div class="button">Encrypt</div>
+              <div class="button--ghost">Copy output</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-note">Final wireframe · KriptoKit</div>
+  </div>
+</body>
+</html>
