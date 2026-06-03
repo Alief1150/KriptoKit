@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/Logo.png" alt="KriptoKit logo" width="260" />
+  <img src="assets/Logo.png" alt="KriptoKit logo" width="180" />
 </p>
 
 <p align="center">
@@ -10,21 +10,40 @@
 </p>
 
 <p align="center">
-  KriptoKit adalah toolkit kriptografi browser-side untuk demo UAS Kriptografi yang fokus pada tampilan editorial, workflow drag-and-drop, dan pemrosesan data yang tetap lokal di browser.
+  KriptoKit adalah toolkit kriptografi browser-side untuk proyek final Kriptografi. Aplikasi ini dibuat compact, editorial, dan sepenuhnya berjalan di browser tanpa backend.
 </p>
 
-## 🔎 Project overview
+## Overview
 
-KriptoKit adalah aplikasi web kriptografi ringan yang berjalan sepenuhnya di sisi browser. Aplikasi ini dibuat untuk menampilkan beberapa operasi kriptografi dasar dalam satu antarmuka yang rapi, compact, dan cocok untuk presentasi.
+KriptoKit adalah aplikasi web kriptografi ringan yang berjalan sepenuhnya di sisi browser. Proyek ini dirancang untuk presentasi tugas akhir/UAS dengan tampilan yang kuat secara visual, alur interaksi yang sederhana, dan fokus pada demo fitur kriptografi dasar.
 
-Fokus utama proyek ini:
+Ciri utama proyek ini:
+- tampilan dark maroon dengan nuansa editorial
+- header ticker yang berjalan di area hero
+- background grid sebagai elemen visual
+- alur drag-and-drop untuk aktivasi operasi
+- semua pemrosesan tetap lokal di browser
 
-- semua proses berjalan lokal di browser
-- tidak ada login, database, atau backend API
-- cocok untuk demonstrasi tugas akhir / UAS
-- UI dibuat dark, editorial, dan modern
+## Goals
 
-## ✨ Main features
+- Menampilkan AES-GCM untuk enkripsi dan dekripsi teks.
+- Menyediakan Base64 encode/decode.
+- Menyediakan hashing SHA-256 untuk teks.
+- Menyediakan ROT13 dan konversi Hex.
+- Menyediakan verifikasi integritas file lewat SHA-256.
+- Menjaga semuanya client-side.
+- Menjaga UI tetap compact dan rapi untuk presentasi.
+
+## Non-Goals
+
+- Tidak ada login.
+- Tidak ada database.
+- Tidak ada backend API.
+- Tidak ada upload file ke server.
+- Tidak ada kolaborasi multi-user.
+- Tidak ada chaining kompleks seperti CyberChef.
+
+## Main features
 
 - AES-GCM encrypt / decrypt berbasis password
 - Base64 encode / decode
@@ -36,14 +55,27 @@ Fokus utama proyek ini:
 - pencarian operasi dari sidebar
 - tampilan browser-side only, tanpa upload ke server
 
-## 🧱 Tech stack
+## Tech stack
 
 - Next.js 14.2.33
 - React 18.3.1
 - TypeScript
 - Browser Web Crypto API
 
-## 📁 Repository structure
+## Current UI direction
+
+- Dark background dengan aksen maroon
+- White grid / grid overlay
+- Ambient glow merah-maroon
+- Judul editorial yang besar
+- Running ticker di atas area hero
+- Layout 3 kolom yang compact
+  - kiri: daftar operasi
+  - tengah: SHA-256 verification tool
+  - kanan: workspace operasi aktif
+- Aktivasi utama lewat drag-and-drop
+
+## Repository structure
 
 ```txt
 KriptoKit/
@@ -53,12 +85,12 @@ KriptoKit/
 │   ├── layout.tsx         # metadata aplikasi
 │   └── page.tsx           # entry page
 ├── assets/
-│   └── Logo.png           # logo utama untuk README dan branding
+│   └── Logo.png           # logo utama KriptoKit
 ├── lib/
 │   └── crypto.ts          # helper crypto browser-side
 ├── wireframe.html         # referensi visual / wireframe
 ├── index.html             # artefak halaman statis
-├── CONTEXT.md             # konteks proyek
+├── CONTEXT.md             # konteks proyek dan arah UI
 ├── package.json           # scripts dan dependencies
 ├── package-lock.json      # locked dependencies
 ├── next-env.d.ts          # typing Next.js
@@ -66,18 +98,24 @@ KriptoKit/
 └── README.md              # dokumentasi proyek
 ```
 
-## ✅ Requirements
+## Requirements
 
-- Node.js `>=20 <23`
+- Node.js `>=20 <26`
 - npm
 - Browser modern yang mendukung Web Crypto API
 
 Rekomendasi runtime:
-
 - Node.js 22
 - Ubuntu / Debian / distro Linux modern lainnya
 
-## ⚙️ Local setup
+## Important scripts
+
+- `npm run dev` - local development
+- `npm run build` - production build
+- `npm run start` - run production build
+- `npm run typecheck` - TypeScript check
+
+## Local setup
 
 ### 1. Clone repository
 
@@ -112,7 +150,7 @@ npm run build
 npm run start
 ```
 
-## 🐧 Ubuntu / Debian deployment
+## Ubuntu / Debian deployment
 
 Langkah aman untuk testing di Ubuntu/Debian:
 
@@ -165,48 +203,65 @@ Jika ingin dibuka dari perangkat lain di LAN, jalankan dev mode dengan hostname 
 npm run dev -- --hostname 0.0.0.0
 ```
 
-## 🔐 Cara kerja fitur cryptography
+## Behavior
 
-### AES-GCM
+### Operation activation
 
-- input plaintext dan password
-- hasil enkripsi disimpan sebagai JSON bundle
-- bundle berisi `salt`, `iv`, dan `ciphertext`
-- decrypt memakai payload yang sama dan password yang sesuai
+User meng-drag operation card dari panel kiri ke workspace untuk mengaktifkan operasi.
+Klik pada kartu operasi bukan metode utama.
 
-### SHA-256 verification
+### Verification tool
 
-- user memilih file target
-- user memilih file TXT referensi yang berisi hash SHA-256 hex
-- aplikasi menghitung hash file target secara lokal
-- hasil dibandingkan dengan hash referensi
+Tool verifikasi menerima:
+- file target
+- file TXT referensi berisi hash SHA-256 hex
 
-### Base64 / ROT13 / Hex
+Aplikasi menghitung hash file target secara lokal dan membandingkannya dengan hash referensi.
 
-- semua transformasi dilakukan langsung di browser
-- tidak ada request ke server
-- output bisa dipakai ulang untuk demo atau presentasi
+### Crypto helpers
 
-## 🎨 Visual reference
+Lokasinya di `lib/crypto.ts`.
 
-- `wireframe.html` berisi referensi visual terbaru untuk layout KriptoKit.
-- Header wireframe sekarang mengikuti branding logo yang dipakai di README.
+Fungsi yang tersedia:
+- AES-GCM encrypt/decrypt
+- Base64 helpers
+- SHA-256 hashing
+- ROT13
+- Hex encode/decode
 
-## 📝 Notes
+## User flow
 
-- Aplikasi ini memang sengaja dibuat client-side only.
+Cara paling mudah untuk mencoba proyek ini:
+
+1. `git clone <repo-url>`
+2. `cd KriptoKit`
+3. `npm ci`
+4. `npm run dev`
+5. buka `http://localhost:3000`
+6. drag operation ke workspace untuk mengaktifkan mode
+
+Kalau ingin production mode:
+
+1. `npm ci`
+2. `npm run build`
+3. `npm run start`
+
+## Notes
+
+- Aplikasi ini sengaja dibuat client-side only.
 - Tidak ada database.
 - Tidak ada file upload ke server.
 - Tidak ada backend API.
 - Clipboard API dipakai untuk menyalin hasil output.
 - Drag-and-drop adalah cara utama untuk mengaktifkan operation workspace.
+- `wireframe.html` adalah referensi visual untuk arah desain dan branding.
 
-## 📌 Untuk presentasi
+## Untuk presentasi
 
 Kalau ingin menjelaskan proyek ini ke dosen atau penguji, ringkasannya begini:
 
 > KriptoKit adalah web app kriptografi ringan yang berjalan sepenuhnya di browser untuk demonstrasi AES-GCM, Base64, SHA-256, ROT13, Hex conversion, dan file integrity verification tanpa backend.
 
-## 📄 License
+## License
 
 Belum ditentukan. Jika dibutuhkan, tambahkan lisensi sesuai kebutuhan proyek.
