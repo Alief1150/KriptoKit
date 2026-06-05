@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-14.2.33-000000?logo=nextdotjs&logoColor=white" alt="Next.js badge" />
+  <img src="https://img.shields.io/badge/Next.js-14.2.35-000000?logo=nextdotjs&logoColor=white" alt="Next.js badge" />
   <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black" alt="React badge" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white" alt="TypeScript badge" />
   <img src="https://img.shields.io/badge/Web_Crypto_API-client--side-8B1E3F" alt="Web Crypto API badge" />
@@ -13,9 +13,21 @@
   KriptoKit adalah toolkit kriptografi browser-side untuk proyek final Kriptografi. Aplikasi ini dibuat compact, editorial, dan sepenuhnya berjalan di browser tanpa backend.
 </p>
 
-## Overview
+## ✨ Showcase
+
+<p align="center">
+  <img src="assets/showcase.png" alt="KriptoKit showcase screenshot" width="100%" />
+</p>
+
+## 🧭 Overview
 
 KriptoKit adalah aplikasi web kriptografi ringan yang berjalan sepenuhnya di sisi browser. Proyek ini dirancang untuk presentasi tugas akhir/UAS dengan tampilan yang kuat secara visual, alur interaksi yang sederhana, dan fokus pada demo fitur kriptografi dasar.
+
+> ⚠️ KriptoKit berjalan sepenuhnya di browser. Tidak ada backend, database, atau upload file ke server.
+>
+> 💡 Gunakan drag-and-drop untuk mengaktifkan operasi utama, lalu lihat hasilnya langsung di workspace.
+>
+> 🔒 Seluruh pemrosesan file dan teks tetap lokal di perangkat user.
 
 Ciri utama proyek ini:
 - tampilan dark maroon dengan nuansa editorial
@@ -24,7 +36,7 @@ Ciri utama proyek ini:
 - alur drag-and-drop untuk aktivasi operasi
 - semua pemrosesan tetap lokal di browser
 
-## Goals
+## 🎯 Goals
 
 - Menampilkan AES-GCM untuk enkripsi dan dekripsi teks.
 - Menyediakan Base64 encode/decode.
@@ -34,7 +46,7 @@ Ciri utama proyek ini:
 - Menjaga semuanya client-side.
 - Menjaga UI tetap compact dan rapi untuk presentasi.
 
-## Non-Goals
+## 🚫 Non-Goals
 
 - Tidak ada login.
 - Tidak ada database.
@@ -43,7 +55,7 @@ Ciri utama proyek ini:
 - Tidak ada kolaborasi multi-user.
 - Tidak ada chaining kompleks seperti CyberChef.
 
-## Main features
+## ⚙️ Main features
 
 - AES-GCM encrypt / decrypt berbasis password
 - Base64 encode / decode
@@ -55,14 +67,14 @@ Ciri utama proyek ini:
 - pencarian operasi dari sidebar
 - tampilan browser-side only, tanpa upload ke server
 
-## Tech stack
+## 🧱 Tech stack
 
-- Next.js 14.2.33
+- Next.js 14.2.35
 - React 18.3.1
 - TypeScript
 - Browser Web Crypto API
 
-## Current UI direction
+## 🎨 Current UI direction
 
 - Dark background dengan aksen maroon
 - White grid / grid overlay
@@ -75,7 +87,7 @@ Ciri utama proyek ini:
   - kanan: workspace operasi aktif
 - Aktivasi utama lewat drag-and-drop
 
-## Repository structure
+## 📁 Repository structure
 
 ```txt
 KriptoKit/
@@ -85,7 +97,8 @@ KriptoKit/
 │   ├── layout.tsx         # metadata aplikasi
 │   └── page.tsx           # entry page
 ├── assets/
-│   └── Logo.png           # logo utama KriptoKit
+│   ├── Logo.png           # logo utama KriptoKit
+│   └── showcase.png       # screenshot showcase README
 ├── lib/
 │   └── crypto.ts          # helper crypto browser-side
 ├── wireframe.html         # referensi visual / wireframe
@@ -98,7 +111,7 @@ KriptoKit/
 └── README.md              # dokumentasi proyek
 ```
 
-## Requirements
+## ✅ Requirements
 
 - Node.js `>=20 <26`
 - npm
@@ -108,14 +121,14 @@ Rekomendasi runtime:
 - Node.js 22
 - Ubuntu / Debian / distro Linux modern lainnya
 
-## Important scripts
+## 🚀 Important scripts
 
 - `npm run dev` - local development
 - `npm run build` - production build
 - `npm run start` - run production build
 - `npm run typecheck` - TypeScript check
 
-## Local setup
+## 🛠️ Local setup
 
 ### 1. Clone repository
 
@@ -150,7 +163,7 @@ npm run build
 npm run start
 ```
 
-## Ubuntu / Debian deployment
+## 🐧 Ubuntu / Debian deployment
 
 Langkah aman untuk testing di Ubuntu/Debian:
 
@@ -203,7 +216,7 @@ Jika ingin dibuka dari perangkat lain di LAN, jalankan dev mode dengan hostname 
 npm run dev -- --hostname 0.0.0.0
 ```
 
-## Behavior
+## 🔐 Behavior
 
 ### Operation activation
 
@@ -229,7 +242,7 @@ Fungsi yang tersedia:
 - ROT13
 - Hex encode/decode
 
-## User flow
+## 👣 User flow
 
 Cara paling mudah untuk mencoba proyek ini:
 
@@ -246,7 +259,7 @@ Kalau ingin production mode:
 2. `npm run build`
 3. `npm run start`
 
-## Notes
+## 📝 Notes
 
 - Aplikasi ini sengaja dibuat client-side only.
 - Tidak ada database.
@@ -256,12 +269,6 @@ Kalau ingin production mode:
 - Drag-and-drop adalah cara utama untuk mengaktifkan operation workspace.
 - `wireframe.html` adalah referensi visual untuk arah desain dan branding.
 
-## Untuk presentasi
-
-Kalau ingin menjelaskan proyek ini ke dosen atau penguji, ringkasannya begini:
-
-> KriptoKit adalah web app kriptografi ringan yang berjalan sepenuhnya di browser untuk demonstrasi AES-GCM, Base64, SHA-256, ROT13, Hex conversion, dan file integrity verification tanpa backend.
-
-## License
+## 📄 License
 
 Belum ditentukan. Jika dibutuhkan, tambahkan lisensi sesuai kebutuhan proyek.
