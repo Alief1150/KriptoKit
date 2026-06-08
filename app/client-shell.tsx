@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { base64ToBytes, bufferToBase64, decryptAes, encryptAes, fromHex, rot13, sha256Hex, bytesToUtf8, utf8ToBytes, toHex } from "@/lib/crypto";
+import StarOnGithub from "@/components/ui/button-github";
 
 type Mode = "aes" | "base64" | "sha256" | "rot13" | "hex";
 type AesSubmode = "encrypt" | "decrypt";
 type SimpleSubmode = "encode" | "decode";
+type AesAlgorithm = "AES-GCM" | "AES-CBC" | "AES-CFB";
+type AesEncoding = "utf8" | "hex" | "base64";
+type AesIvMode = "random" | "manual";
 type DragTarget = "target" | "reference" | "operation" | null;
 type Tone = "neutral" | "valid" | "invalid";
 
@@ -30,8 +34,159 @@ const tickerItems = [
   "Tetapi hari ini SAYA AKAN LAWAN!",
 ];
 
+const aesAlgorithms: Array<{ value: AesAlgorithm; label: string }> = [
+  { value: "AES-GCM", label: "AES-GCM" },
+  { value: "AES-CBC", label: "AES-CBC" },
+  { value: "AES-CFB", label: "AES-CFB" },
+];
+
+const aesEncodings: Array<{ value: AesEncoding; label: string }> = [
+  { value: "utf8", label: "UTF-8" },
+  { value: "hex", label: "Hex" },
+  { value: "base64", label: "Base64" },
+];
+
+const aesIvModes: Array<{ value: AesIvMode; label: string }> = [
+  { value: "random", label: "Random IV" },
+  { value: "manual", label: "Manual IV" },
+];
+
+type SmokeBackgroundProps = {
+  smokeColor?: string;
+};
+
+function hexToRgb(hex: string): [number, number, number] | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? [
+        Number.parseInt(result[1], 16) / 255,
+        Number.parseInt(result[2], 16) / 255,
+        Number.parseInt(result[3], 16) / 255,
+      ]
+    : null;
+}
+
+function SmokeBackground({ smokeColor = "#8b2f24" }: SmokeBackgroundProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const gl = canvas.getContext("webgl2");
+    if (!gl) return;
+
+    const vertexSource = `#version 300 es
+precision highp float;
+in vec4 position;
+void main(){ gl_Position = position; }`;
+
+    const fragmentSource = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+uniform vec3 u_color;
+
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T (time+660.)
+
+float rnd(vec2 p){p=fract(p*vec2(12.9898,78.233));p+=dot(p,p+34.56);return fract(p.x*p.y);} 
+float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);return mix(mix(rnd(i),rnd(i+vec2(1,0)),u.x),mix(rnd(i+vec2(0,1)),rnd(i+1.),u.x),u.y);} 
+float fbm(vec2 p){float t=.0,a=1.;for(int i=0;i<5;i++){t+=a*noise(p);p*=mat2(1,-1.2,.2,1.2)*2.;a*=.5;}return t;}
+
+void main(){
+  vec2 uv=(FC-.5*R)/R.y;
+  vec3 col=vec3(1.);
+  uv.x+=.25;
+  uv*=vec2(2.,1.);
+
+  float n=fbm(uv*.28-vec2(T*.01,0.));
+  n=noise(uv*3.+n*2.);
+
+  col.r-=fbm(uv+vec2(0,T*.015)+n);
+  col.g-=fbm(uv*1.003+vec2(0,T*.015)+n+.003);
+  col.b-=fbm(uv*1.006+vec2(0,T*.015)+n+.006);
+
+  col=mix(col, u_color, dot(col,vec3(.21,.71,.07)));
+  col=mix(vec3(.08),col,min(time*.1,1.));
+  col=clamp(col,.08,1.);
+  O=vec4(col,1.);
+}`;
+
+    const compile = (shader: WebGLShader, source: string) => {
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+    };
+
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    const program = gl.createProgram();
+    if (!vs || !fs || !program) return;
+
+    compile(vs, vertexSource);
+    compile(fs, fragmentSource);
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+
+    const vertices = new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]);
+    const buffer = gl.createBuffer();
+    if (!buffer) return;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const position = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    const resolutionLocation = gl.getUniformLocation(program, "resolution");
+    const timeLocation = gl.getUniformLocation(program, "time");
+    const colorLocation = gl.getUniformLocation(program, "u_color");
+    const color = hexToRgb(smokeColor) ?? [0.55, 0.18, 0.14];
+
+    let raf = 0;
+    const resize = () => {
+      const dpr = Math.max(1, window.devicePixelRatio);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    };
+
+    const render = (now: number) => {
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      gl.uniform1f(timeLocation, now * 0.001);
+      gl.uniform3fv(colorLocation, color);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      raf = requestAnimationFrame(render);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    raf = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(buffer);
+    };
+  }, [smokeColor]);
+
+  return <canvas ref={canvasRef} className="smoke-bg" aria-hidden="true" />;
+}
+
 const modeTitles: Record<Mode, { title: string; subtitle: string }> = {
-  aes: { title: "AES Toolkit", subtitle: "Password-based AES-GCM demo. Encrypt outputs a JSON bundle; decrypt consumes the same package." },
+  aes: { title: "AES Toolkit", subtitle: "Password-based AES demo with GCM, CBC, and CFB. Encrypt outputs a JSON bundle; decrypt consumes the same package." },
   base64: { title: "Base64 Encoder / Decoder", subtitle: "Simple representation change for text. The panel stays fixed; only the recipe changes." },
   sha256: { title: "SHA-256 Text Hash", subtitle: "One-way hash generator for text. Small input changes should create different digests." },
   rot13: { title: "ROT13 Transformer", subtitle: "Lightweight letter rotation for quick reversible substitution demos." },
@@ -66,6 +221,11 @@ export default function ClientShell() {
   const [aesSubmode, setAesSubmode] = useState<AesSubmode>("encrypt");
   const [base64Submode, setBase64Submode] = useState<SimpleSubmode>("encode");
   const [hexSubmode, setHexSubmode] = useState<SimpleSubmode>("encode");
+  const [aesAlgorithm, setAesAlgorithm] = useState<AesAlgorithm>("AES-GCM");
+  const [aesInputEncoding, setAesInputEncoding] = useState<AesEncoding>("utf8");
+  const [aesIvMode, setAesIvMode] = useState<AesIvMode>("random");
+  const [aesIvEncoding, setAesIvEncoding] = useState<AesEncoding>("hex");
+  const [aesIvValue, setAesIvValue] = useState("");
   const [dragTarget, setDragTarget] = useState<DragTarget>(null);
 
   const [targetFile, setTargetFile] = useState<File | null>(null);
@@ -107,6 +267,9 @@ export default function ClientShell() {
   }, [search]);
 
   const activeOperation = modeTitles[activeMode];
+  const aesInputEncodingLabel = aesEncodings.find(({ value }) => value === aesInputEncoding)?.label ?? "UTF-8";
+  const aesIvEncodingLabel = aesEncodings.find(({ value }) => value === aesIvEncoding)?.label ?? "Hex";
+  const aesIvLengthLabel = aesAlgorithm === "AES-GCM" ? "12 bytes" : "16 bytes";
 
   async function copyText(value: string) {
     if (!value) return;
@@ -168,7 +331,15 @@ export default function ClientShell() {
     }
 
     try {
-      setAesEncryptOutput(await encryptAes(aesEncryptInput, aesEncryptPassword));
+      setAesEncryptOutput(
+        await encryptAes(aesEncryptInput, aesEncryptPassword, {
+          algorithm: aesAlgorithm,
+          inputEncoding: aesInputEncoding,
+          ivMode: aesIvMode,
+          ivEncoding: aesIvEncoding,
+          ivValue: aesIvValue,
+        }),
+      );
     } catch (error) {
       setAesEncryptOutput(error instanceof Error ? error.message : "Encryption failed.");
     }
@@ -181,7 +352,12 @@ export default function ClientShell() {
     }
 
     try {
-      setAesDecryptOutput(await decryptAes(aesDecryptInput, aesDecryptPassword));
+      const result = await decryptAes(aesDecryptInput, aesDecryptPassword);
+      setAesDecryptOutput(result.plaintext);
+      setAesAlgorithm(result.algorithm);
+      setAesInputEncoding(result.inputEncoding);
+      setAesIvEncoding(result.ivEncoding);
+      setAesIvMode(result.ivMode);
     } catch (error) {
       setAesDecryptOutput(error instanceof Error ? error.message : "Decryption failed.");
     }
@@ -241,6 +417,7 @@ export default function ClientShell() {
 
   return (
     <main className="app-shell">
+      <SmokeBackground smokeColor="#8b2f24" />
       <header className="topbar">
         <div className="ticker" aria-label="Technical status ticker">
           <div className="ticker__track">
@@ -254,7 +431,10 @@ export default function ClientShell() {
 
         <div className="brand brand--stacked">
           <div className="tiny">Kriptografi UAS · browser-side only</div>
-          <h1>KriptoKit</h1>
+          <div className="brand-row">
+            <h1>KriptoKit</h1>
+            <StarOnGithub className="github-button-corner" />
+          </div>
         </div>
       </header>
 
@@ -467,33 +647,41 @@ export default function ClientShell() {
 
                 {activeMode === "aes" || activeMode === "base64" || activeMode === "hex" ? (
                   <div className="toolbar" role="tablist" aria-label={`${activeMode.toUpperCase()} mode`}>
-                    <label className="seg-toggle">
-                      <input
-                        type="radio"
-                        name={`${activeMode}-submode`}
-                        checked={activeMode === "aes" ? aesSubmode === "encrypt" : activeMode === "base64" ? base64Submode === "encode" : hexSubmode === "encode"}
-                        onChange={() => {
-                          if (activeMode === "aes") setAesSubmode("encrypt");
-                          if (activeMode === "base64") setBase64Submode("encode");
-                          if (activeMode === "hex") setHexSubmode("encode");
-                        }}
-                      />
-                      <span className="seg-toggle__ui"><span>Encode /</span><span>Encrypt</span></span>
-                    </label>
+                    {(() => {
+                      const isDecode = activeMode === "aes" ? aesSubmode === "decrypt" : activeMode === "base64" ? base64Submode === "decode" : hexSubmode === "decode";
+                      const leftLabel = activeMode === "aes" ? "Encrypt" : "Encode";
+                      const rightLabel = activeMode === "aes" ? "Decrypt" : "Decode";
 
-                    <label className="seg-toggle">
-                      <input
-                        type="radio"
-                        name={`${activeMode}-submode`}
-                        checked={activeMode === "aes" ? aesSubmode === "decrypt" : activeMode === "base64" ? base64Submode === "decode" : hexSubmode === "decode"}
-                        onChange={() => {
-                          if (activeMode === "aes") setAesSubmode("decrypt");
-                          if (activeMode === "base64") setBase64Submode("decode");
-                          if (activeMode === "hex") setHexSubmode("decode");
-                        }}
-                      />
-                      <span className="seg-toggle__ui"><span>Decode /</span><span>Decrypt</span></span>
-                    </label>
+                      return (
+                        <div className={`mode-switch${isDecode ? " is-right" : ""}`}>
+                          <span className="mode-switch__thumb" aria-hidden="true" />
+                          <button
+                            className="mode-switch__button"
+                            type="button"
+                            aria-pressed={!isDecode}
+                            onClick={() => {
+                              if (activeMode === "aes") setAesSubmode("encrypt");
+                              if (activeMode === "base64") setBase64Submode("encode");
+                              if (activeMode === "hex") setHexSubmode("encode");
+                            }}
+                          >
+                            {leftLabel}
+                          </button>
+                          <button
+                            className="mode-switch__button"
+                            type="button"
+                            aria-pressed={isDecode}
+                            onClick={() => {
+                              if (activeMode === "aes") setAesSubmode("decrypt");
+                              if (activeMode === "base64") setBase64Submode("decode");
+                              if (activeMode === "hex") setHexSubmode("decode");
+                            }}
+                          >
+                            {rightLabel}
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : null}
               </div>
@@ -503,32 +691,91 @@ export default function ClientShell() {
                   <div className="split-grid">
                     <label className="field">
                       <span className="tiny">Key / Password</span>
-                      <input value={aesSubmode === "encrypt" ? aesEncryptPassword : aesDecryptPassword} onChange={(event) => (aesSubmode === "encrypt" ? setAesEncryptPassword(event.target.value) : setAesDecryptPassword(event.target.value))} type="password" placeholder="Secret key" />
+                      <input
+                        value={aesSubmode === "encrypt" ? aesEncryptPassword : aesDecryptPassword}
+                        onChange={(event) => (aesSubmode === "encrypt" ? setAesEncryptPassword(event.target.value) : setAesDecryptPassword(event.target.value))}
+                        type="password"
+                        placeholder="Secret key"
+                      />
                     </label>
+
                     <label className="field">
-                      <span className="tiny">IV mode</span>
-                      <input type="text" value={aesSubmode === "encrypt" ? "Random IV" : "From package"} readOnly />
+                      <span className="tiny">IV Mode</span>
+                      <select value={aesIvMode} onChange={(event) => setAesIvMode(event.target.value as AesIvMode)}>
+                        {aesIvModes.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                   </div>
+
                   <div className="split-grid">
                     <label className="field">
                       <span className="tiny">Mode</span>
-                      <input type="text" value="GCM" readOnly />
+                      <select value={aesAlgorithm} onChange={(event) => setAesAlgorithm(event.target.value as AesAlgorithm)}>
+                        {aesAlgorithms.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </label>
+
                     <label className="field">
                       <span className="tiny">Input</span>
-                      <input type="text" value={aesSubmode === "encrypt" ? "Raw plaintext" : "Cipher package"} readOnly />
+                      <select value={aesInputEncoding} onChange={(event) => setAesInputEncoding(event.target.value as AesEncoding)}>
+                        {aesEncodings.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                   </div>
+
+                  {aesIvMode === "manual" ? (
+                    <div className="split-grid">
+                      <label className="field">
+                        <span className="tiny">IV format</span>
+                        <select value={aesIvEncoding} onChange={(event) => setAesIvEncoding(event.target.value as AesEncoding)}>
+                          {aesEncodings.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="field">
+                        <span className="tiny">IV value</span>
+                        <input
+                          value={aesIvValue}
+                          onChange={(event) => setAesIvValue(event.target.value)}
+                          type="text"
+                          placeholder={`Enter ${aesIvEncodingLabel} IV (${aesIvLengthLabel})`}
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
                   <label className="field">
-                    <span className="tiny">{aesSubmode === "encrypt" ? "Plaintext" : "Cipher package"}</span>
+                    <span className="tiny">
+                      {aesSubmode === "encrypt" ? `Plaintext (${aesInputEncodingLabel})` : `Cipher bundle (JSON)`}
+                    </span>
                     <textarea
                       rows={4}
                       value={aesSubmode === "encrypt" ? aesEncryptInput : aesDecryptInput}
                       onChange={(event) => (aesSubmode === "encrypt" ? setAesEncryptInput(event.target.value) : setAesDecryptInput(event.target.value))}
-                      placeholder={aesSubmode === "encrypt" ? "Type plaintext to encrypt" : 'Paste JSON package from encrypt mode'}
+                      placeholder={
+                        aesSubmode === "encrypt"
+                          ? `Type ${aesInputEncodingLabel.toLowerCase()} plaintext to encrypt`
+                          : "Paste JSON bundle from encrypt mode"
+                      }
                     />
                   </label>
+
                   <div className="mode-panel__actions">
                     <button className="action" type="button" onClick={aesSubmode === "encrypt" ? runAesEncrypt : runAesDecrypt}>
                       {aesSubmode === "encrypt" ? "Encrypt" : "Decrypt"}
@@ -541,9 +788,16 @@ export default function ClientShell() {
                       <span>Copy output</span>
                     </button>
                   </div>
+
                   <div className="result-box">
-                    <label htmlFor={aesSubmode === "encrypt" ? "aesEncryptOutput" : "aesDecryptOutput"}>Output</label>
-                    <textarea readOnly value={aesSubmode === "encrypt" ? aesEncryptOutput : aesDecryptOutput} placeholder={aesSubmode === "encrypt" ? "Ciphertext package appears here" : "Plaintext appears here"} />
+                    <label htmlFor={aesSubmode === "encrypt" ? "aesEncryptOutput" : "aesDecryptOutput"}>
+                      {aesSubmode === "encrypt" ? "Output" : `Output (${aesInputEncodingLabel})`}
+                    </label>
+                    <textarea
+                      readOnly
+                      value={aesSubmode === "encrypt" ? aesEncryptOutput : aesDecryptOutput}
+                      placeholder={aesSubmode === "encrypt" ? "Ciphertext package appears here" : `Decrypted ${aesInputEncodingLabel.toLowerCase()} output appears here`}
+                    />
                   </div>
                 </div>
               ) : null}

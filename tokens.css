@@ -1,29 +1,68 @@
 :root {
-  --font-display: Inter, system-ui, sans-serif;
-  --font-body: Inter, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --color-bg: oklch(14% 0.018 258);
+  --color-bg-elevated: oklch(18% 0.018 258);
+  --color-surface: oklch(22% 0.018 258);
+  --color-surface-2: oklch(26% 0.018 258);
+  --color-line: oklch(34% 0.02 258);
+  --color-line-strong: oklch(46% 0.02 258);
+  --color-text: oklch(96% 0.01 258);
+  --color-text-muted: oklch(75% 0.015 258);
+  --color-text-soft: oklch(62% 0.012 258);
+  --color-accent: oklch(61% 0.145 27);
+  --color-accent-strong: oklch(53% 0.16 26);
+  --color-accent-soft: oklch(31% 0.06 27);
+  --color-accent-faint: oklch(24% 0.04 27);
+  --color-success: oklch(76% 0.11 147);
+  --color-warning: oklch(80% 0.11 82);
+  --color-error: oklch(67% 0.16 28);
+  --color-focus: oklch(78% 0.15 27);
+  --color-shadow: oklch(10% 0.01 258 / 0.48);
 
-  --color-text: oklch(98% 0.01 28);
-  --color-text-muted: oklch(82% 0.02 28 / 0.72);
-  --color-line: oklch(90% 0.015 240 / 0.14);
-  --color-accent: #8b1e3f;
-  --color-accent-strong: #b94d6a;
-  --color-focus: oklch(78% 0.13 27 / 0.95);
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
-  --space-3: 1rem;
-  --space-4: 1.5rem;
-  --space-5: 2rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
 
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3.25rem;
+  --text-display: clamp(2.8rem, 5vw, 5.5rem);
+  --text-display-s: clamp(2.2rem, 4vw, 3.8rem);
 
-  --rule-base: 1px;
-  --rule-strong: 2px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.9, 0.15);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
-  --dur-fast: 160ms;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 260ms;
 
-  --text-xs: 0.78rem;
+  --rule-thin: 1px;
+  --rule-base: 2px;
+  --rule-strong: 3px;
+
+  --radius-xs: 10px;
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-soft: 0 14px 40px var(--color-shadow);
+  --shadow-panel: 0 1px 0 oklch(100% 0 0 / 0.02) inset, 0 18px 48px var(--color-shadow);
 }

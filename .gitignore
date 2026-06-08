@@ -6,3 +6,8 @@ node_modules/
 *.docx
 session-ses_*.md
 .hallmark/
+.zip
+*.env
+*.vercel/
+*.DS_Store
+*.env.local

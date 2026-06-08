@@ -8,7 +8,7 @@ It is designed as a compact demo app with a strong editorial UI, a running ticke
 
 ## Goals
 
-- Showcase AES-GCM encryption and decryption for text.
+- Showcase AES encryption and decryption for text using GCM, CBC, and CFB.
 - Provide Base64 encode/decode.
 - Provide SHA-256 hashing for text.
 - Provide ROT13 and Hex conversion tools.
@@ -30,6 +30,8 @@ It is designed as a compact demo app with a strong editorial UI, a running ticke
 - Next.js 14.2.33
 - React 18.3.1
 - TypeScript
+- Local Inter fonts from `assets/Inter/`
+- node-forge for AES modes beyond native Web Crypto support
 - Browser Web Crypto API
 
 ## Important Scripts
@@ -41,7 +43,7 @@ It is designed as a compact demo app with a strong editorial UI, a running ticke
 
 ## Runtime Requirements
 
-- Node.js `>=20 <23`
+- Node.js `>=20 <26`
 - Recommended: Node 22 via `nvm`
 - Works without extra environment variables
 
@@ -78,7 +80,7 @@ It computes the target file hash locally and compares it with the reference hash
 Located in `lib/crypto.ts`.
 
 Functions:
-- AES-GCM encrypt/decrypt
+- AES encrypt/decrypt with GCM, CBC, and CFB
 - Base64 helpers
 - SHA-256 hashing
 - ROT13
@@ -91,7 +93,7 @@ Functions:
 - `app/page.tsx` - page entry
 - `app/layout.tsx` - app shell metadata/layout
 - `lib/crypto.ts` - browser crypto helpers
-- `wireframe.html` - visual reference / wireframe artifact
+- `assets/wireframe.html` - visual reference / wireframe artifact
 
 ## Deployment Notes
 
@@ -104,6 +106,43 @@ For Ubuntu/Debian testing, the safest path is:
 5. run `npm run start`
 
 If exposing to another machine on LAN, run dev mode with `--hostname 0.0.0.0`.
+
+## GitHub Flow
+
+Use this order when publishing or updating the repository:
+
+1. Verify local health with `npm run typecheck` and `npm run build`.
+2. Check `git status` to confirm only intended files changed.
+3. Update docs if the workflow or setup changed.
+4. Commit the change with a clear message that describes the user-facing outcome.
+5. Push to GitHub on the intended branch.
+6. Tell the user exactly what changed and how to run it.
+
+## Hermes Handoff
+
+Hermes should follow this flow when preparing the repo for GitHub:
+
+1. Make sure the repo is self-contained.
+2. Keep `README.md` aligned with the real run instructions.
+3. Keep `CONTEXT.md` aligned with the current project state.
+4. Do not push secrets, keys, or generated build artifacts.
+5. Prefer minimal commits that keep the history easy to review.
+6. Before pushing, confirm the app builds successfully on the target Node range.
+
+## User Flow
+
+The easiest way for another person to test the app is:
+
+1. `git clone <repo-url>`
+2. `cd <repo>`
+3. `npm ci`
+4. `npm run dev`
+
+If they want production mode:
+
+1. `npm ci`
+2. `npm run build`
+3. `npm run start`
 
 ## Implementation Notes
 
