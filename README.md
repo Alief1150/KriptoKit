@@ -13,7 +13,7 @@
   KriptoKit adalah toolkit kriptografi browser-side untuk proyek final Kriptografi. Aplikasi ini dibuat compact, editorial, dan sepenuhnya berjalan di browser tanpa backend.
 </p>
 
-## Overview
+## ✨ Overview
 
 KriptoKit adalah aplikasi web kriptografi ringan yang berjalan sepenuhnya di sisi browser. Proyek ini dirancang untuk presentasi tugas akhir/UAS dengan tampilan yang kuat secara visual, alur interaksi yang sederhana, dan fokus pada demo fitur kriptografi dasar.
 
@@ -24,7 +24,7 @@ Ciri utama proyek ini:
 - alur drag-and-drop untuk aktivasi operasi
 - semua pemrosesan tetap lokal di browser
 
-## Goals
+## 🎯 Goals
 
 - Menampilkan AES multi-mode untuk enkripsi dan dekripsi teks.
 - Menyediakan Base64 encode/decode.
@@ -34,7 +34,7 @@ Ciri utama proyek ini:
 - Menjaga semuanya client-side.
 - Menjaga UI tetap compact dan rapi untuk presentasi.
 
-## Non-Goals
+## 🚫 Non-Goals
 
 - Tidak ada login.
 - Tidak ada database.
@@ -43,26 +43,26 @@ Ciri utama proyek ini:
 - Tidak ada kolaborasi multi-user.
 - Tidak ada chaining kompleks seperti CyberChef.
 
-## Main features
+## ⚙️ Main features
 
-- AES encrypt / decrypt berbasis password dengan mode GCM, CBC, dan CFB
-- Base64 encode / decode
-- SHA-256 text hashing
-- ROT13 transform
-- Hex encode / decode
-- verifikasi integritas file dengan SHA-256
-- drag-and-drop untuk mengaktifkan operasi
-- pencarian operasi dari sidebar
-- tampilan browser-side only, tanpa upload ke server
+- 🔐 AES encrypt / decrypt berbasis password dengan mode GCM, CBC, dan CFB
+- 🧩 Base64 encode / decode
+- 🔎 SHA-256 text hashing
+- 🔄 ROT13 transform
+- 🧱 Hex encode / decode
+- ✅ verifikasi integritas file dengan SHA-256
+- 🖱️ drag-and-drop untuk mengaktifkan operasi
+- 🔍 pencarian operasi dari sidebar
+- 🌐 tampilan browser-side only, tanpa upload ke server
 
-## Tech stack
+## 🛠️ Tech stack
 
 - Next.js 14.2.33
 - React 18.3.1
 - TypeScript
 - Browser Web Crypto API
 
-## Current UI direction
+## 🎨 Current UI direction
 
 - Dark background dengan aksen maroon
 - White grid / grid overlay
@@ -75,7 +75,7 @@ Ciri utama proyek ini:
   - kanan: workspace operasi aktif
 - Aktivasi utama lewat drag-and-drop
 
-## Repository structure
+## 📁 Repository structure
 
 ```txt
 KriptoKit/
@@ -98,7 +98,7 @@ KriptoKit/
 └── README.md              # dokumentasi proyek
 ```
 
-## Requirements
+## 🧾 Requirements
 
 - Node.js `>=20 <26`
 - npm
@@ -108,29 +108,29 @@ Rekomendasi runtime:
 - Node.js 22
 - Ubuntu / Debian / distro Linux modern lainnya
 
-## Important scripts
+## ⚡ Important scripts
 
 - `npm run dev` - local development
 - `npm run build` - production build
 - `npm run start` - run production build
 - `npm run typecheck` - TypeScript check
 
-## Local setup
+## 🚀 Local setup
 
-### 1. Clone repository
+### 1. 📥 Clone repository
 
 ```bash
 git clone <repo-url>
 cd KriptoKit
 ```
 
-### 2. Install dependencies
+### 2. 📦 Install dependencies
 
 ```bash
 npm ci
 ```
 
-### 3. Jalankan development server
+### 3. 🚀 Jalankan development server
 
 ```bash
 npm run dev
@@ -142,7 +142,7 @@ Lalu buka:
 http://localhost:3000
 ```
 
-### 4. Verifikasi build
+### 4. ✅ Verifikasi build
 
 ```bash
 npm run typecheck
@@ -150,11 +150,11 @@ npm run build
 npm run start
 ```
 
-## Ubuntu / Debian deployment
+## 🐧 Ubuntu / Debian deployment
 
 Langkah aman untuk testing di Ubuntu/Debian:
 
-### 1. Install Node.js 22
+### 1. 🧰 Install Node.js 22
 
 Jika memakai `nvm`:
 
@@ -163,27 +163,27 @@ nvm install 22
 nvm use 22
 ```
 
-### 2. Clone repository
+### 2. 📥 Clone repository
 
 ```bash
 git clone <repo-url>
 cd KriptoKit
 ```
 
-### 3. Install dependencies
+### 3. 📦 Install dependencies
 
 ```bash
 npm ci
 ```
 
-### 4. Build untuk production
+### 4. 🏗️ Build untuk production
 
 ```bash
 npm run typecheck
 npm run build
 ```
 
-### 5. Jalankan production app
+### 5. ▶️ Jalankan production app
 
 ```bash
 npm run start
@@ -195,7 +195,7 @@ Aplikasi akan berjalan di:
 http://localhost:3000
 ```
 
-### 6. Akses dari device lain di jaringan lokal
+### 6. 🌍 Akses dari device lain di jaringan lokal
 
 Jika ingin dibuka dari perangkat lain di LAN, jalankan dev mode dengan hostname publik:
 
@@ -211,7 +211,7 @@ npm run dev -- --hostname 0.0.0.0
 
 KriptoKit memakai konsep **operation workspace**. User memilih operasi dari panel kiri, lalu mengaktifkannya dengan cara **drag-and-drop** ke area workspace kanan.
 
-## Alur Umum Penggunaan
+## 🧭 Alur Umum Penggunaan
 
 ```mermaid
 flowchart TD
@@ -225,7 +225,7 @@ flowchart TD
     H --> I[User dapat copy output atau reset input]
 ```
 
-## Catatan Browser-Side
+## 🔒 Catatan Browser-Side
 
 Seluruh proses dilakukan di browser.
 
@@ -254,7 +254,7 @@ Bagian ini menjelaskan cara memakai setiap operation di KriptoKit.
 
 ---
 
-## 1. AES Encrypt / Decrypt
+## 1. 🔐 AES Encrypt / Decrypt
 
 AES digunakan untuk melakukan **enkripsi** dan **dekripsi** teks menggunakan password/key. KriptoKit mendukung mode AES seperti **GCM**, **CBC**, dan **CFB**.
 
@@ -371,7 +371,7 @@ flowchart TD
 
 ---
 
-## 2. SHA-256 Text Hashing
+## 2. 🔎 SHA-256 Text Hashing
 
 SHA-256 digunakan untuk menghasilkan hash dari teks. Hash bersifat **one-way**, artinya hash tidak dapat dikembalikan menjadi teks asli.
 
@@ -414,7 +414,7 @@ flowchart TD
 
 ---
 
-## 3. SHA-256 Verification Tool
+## 3. ✅ SHA-256 Verification Tool
 
 SHA-256 Verification Tool digunakan untuk memverifikasi integritas file. Tool ini membandingkan hash file target dengan hash referensi dari file TXT.
 
@@ -480,7 +480,7 @@ flowchart TD
 
 ---
 
-## 4. Base64 Encode / Decode
+## 4. 🧩 Base64 Encode / Decode
 
 Base64 digunakan untuk mengubah teks menjadi representasi encoded text, dan sebaliknya.
 
@@ -545,7 +545,7 @@ flowchart TD
 
 ---
 
-## 5. ROT13 Transform
+## 5. 🔄 ROT13 Transform
 
 ROT13 adalah transformasi sederhana yang menggeser huruf alfabet sebanyak 13 posisi. ROT13 bukan enkripsi modern dan tidak aman untuk pengamanan data nyata, tetapi berguna untuk demonstrasi transformasi teks.
 
@@ -591,7 +591,7 @@ flowchart TD
 
 ---
 
-## 6. Hex Encode / Decode
+## 6. 🧱 Hex Encode / Decode
 
 Hex operation digunakan untuk mengubah teks menjadi representasi hexadecimal dan mengubah hexadecimal kembali menjadi teks.
 
@@ -675,7 +675,7 @@ flowchart TD
 
 ---
 
-## Behavior
+## 🧪 Behavior
 
 ### Operation activation
 
@@ -701,7 +701,7 @@ Fungsi yang tersedia:
 - ROT13
 - Hex encode/decode
 
-## User flow
+## 👣 User flow
 
 Cara paling mudah untuk mencoba proyek ini:
 
@@ -718,7 +718,7 @@ Kalau ingin production mode:
 2. `npm run build`
 3. `npm run start`
 
-## Notes
+## 📝 Notes
 
 - Aplikasi ini sengaja dibuat client-side only.
 - Tidak ada database.
@@ -728,7 +728,7 @@ Kalau ingin production mode:
 - Drag-and-drop adalah cara utama untuk mengaktifkan operation workspace.
 - `wireframe.html` adalah referensi visual untuk arah desain dan branding.
 
-## Untuk presentasi
+## 🎤 Untuk presentasi
 
 Kalau ingin menjelaskan proyek ini ke dosen atau penguji, ringkasannya begini:
 
@@ -736,7 +736,7 @@ Kalau ingin menjelaskan proyek ini ke dosen atau penguji, ringkasannya begini:
 
 
 
-## Demo Flow Presentasi
+## 🎬 Demo Flow Presentasi
 
 ```mermaid
 flowchart TD
@@ -750,6 +750,6 @@ flowchart TD
 ```
 
 
-## License
+## 📄 License
 
 Belum ditentukan. Jika dibutuhkan, tambahkan lisensi sesuai kebutuhan proyek.
