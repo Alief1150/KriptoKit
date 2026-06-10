@@ -13,7 +13,17 @@
   KriptoKit adalah toolkit kriptografi browser-side untuk proyek final Kriptografi. Aplikasi ini dibuat compact, editorial, dan sepenuhnya berjalan di browser tanpa backend.
 </p>
 
-## Overview
+## ✨ Showcase
+
+<p align="center">
+  <img src="assets/showcase.png" alt="KriptoKit showcase" width="100%" />
+</p>
+
+<p align="center">
+  Tampilan utama KriptoKit: operasi kriptografi, verifikasi file, dan workspace AES dalam satu UI browser-only.
+</p>
+
+## 🚀 Overview
 
 KriptoKit adalah aplikasi web kriptografi ringan yang berjalan sepenuhnya di sisi browser. Proyek ini dirancang untuk presentasi tugas akhir/UAS dengan tampilan yang kuat secara visual, alur interaksi yang sederhana, dan fokus pada demo fitur kriptografi dasar.
 
@@ -24,7 +34,7 @@ Ciri utama proyek ini:
 - alur drag-and-drop untuk aktivasi operasi
 - semua pemrosesan tetap lokal di browser
 
-## Goals
+## 🎯 Goals
 
 - Menampilkan AES multi-mode untuk enkripsi dan dekripsi teks.
 - Menyediakan Base64 encode/decode.
@@ -34,7 +44,7 @@ Ciri utama proyek ini:
 - Menjaga semuanya client-side.
 - Menjaga UI tetap compact dan rapi untuk presentasi.
 
-## Non-Goals
+## 🚫 Non-Goals
 
 - Tidak ada login.
 - Tidak ada database.
@@ -43,7 +53,7 @@ Ciri utama proyek ini:
 - Tidak ada kolaborasi multi-user.
 - Tidak ada chaining kompleks seperti CyberChef.
 
-## Main features
+## ⚙️ Main features
 
 - AES encrypt / decrypt berbasis password dengan mode GCM, CBC, dan CFB
 - Base64 encode / decode
@@ -55,14 +65,14 @@ Ciri utama proyek ini:
 - pencarian operasi dari sidebar
 - tampilan browser-side only, tanpa upload ke server
 
-## Tech stack
+## 🧰 Tech stack
 
 - Next.js 14.2.33
 - React 18.3.1
 - TypeScript
 - Browser Web Crypto API
 
-## Current UI direction
+## 🎨 Current UI direction
 
 - Dark background dengan aksen maroon
 - White grid / grid overlay
@@ -75,7 +85,7 @@ Ciri utama proyek ini:
   - kanan: workspace operasi aktif
 - Aktivasi utama lewat drag-and-drop
 
-## Repository structure
+## 📁 Repository structure
 
 ```txt
 KriptoKit/
@@ -98,7 +108,7 @@ KriptoKit/
 └── README.md              # dokumentasi proyek
 ```
 
-## Requirements
+## ✅ Requirements
 
 - Node.js `>=20 <26`
 - npm
@@ -108,14 +118,14 @@ Rekomendasi runtime:
 - Node.js 22
 - Ubuntu / Debian / distro Linux modern lainnya
 
-## Important scripts
+## 🛠️ Important scripts
 
 - `npm run dev` - local development
 - `npm run build` - production build
 - `npm run start` - run production build
 - `npm run typecheck` - TypeScript check
 
-## Local setup
+## 🚀 Local setup
 
 ### 1. Clone repository
 
@@ -150,7 +160,7 @@ npm run build
 npm run start
 ```
 
-## Ubuntu / Debian deployment
+## 🐧 Ubuntu / Debian deployment
 
 Langkah aman untuk testing di Ubuntu/Debian:
 
@@ -207,7 +217,7 @@ npm run dev -- --hostname 0.0.0.0
 
 ---
 
-# Cara Menggunakan KriptoKit
+# ✨ Cara Menggunakan KriptoKit
 
 KriptoKit memakai konsep **operation workspace**. User memilih operasi dari panel kiri, lalu mengaktifkannya dengan cara **drag-and-drop** ke area workspace kanan.
 
@@ -248,7 +258,7 @@ Artinya:
 
 ---
 
-# Operation Guide
+# 🧩 Operation Guide
 
 Bagian ini menjelaskan cara memakai setiap operation di KriptoKit.
 
